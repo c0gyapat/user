@@ -1,14 +1,22 @@
 import bcrypt from "bcrypt";
-import Database from "better-sqlite3";
+import cors from "cors";
 import express from "express";
+import { db } from "./db.js";
 
-const PORT = 5500;
-
-const db = new Database("database.db");
-db.pragma("journal_mode = WAL");
+const allowedOrigins = ["http://127.0.0.1:5500"];
+const PORT = 5000;
 
 const app = express();
 app.use(express.json());
+app.use(
+	cors({
+		origin: allowedOrigins,
+	})
+);
+
+app.get("/health", (req, res) => {
+	res.status(200).json({ status: "OK" });
+});
 
 app.post("/register", (req, res) => {
 	const { username, password, passwordAgain } = req.body;
